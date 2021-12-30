@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
 
-class TransactionForm extends StatelessWidget {
-  final titleController = TextEditingController();
-  final valueController = TextEditingController();
-
+class TransactionForm extends StatefulWidget {
   final void Function(String, double) onSubmit;
 
   TransactionForm(this.onSubmit);
 
+  @override
+  State<TransactionForm> createState() => _TransactionFormState();
+}
+
+class _TransactionFormState extends State<TransactionForm> {
+  final titleController = TextEditingController();
+
+  final valueController = TextEditingController();
+
+  //Função que valida o salvar do card de input
   _submitForm() {
     final title = titleController.text; //Capturo os dados do formulário
     final value = double.tryParse(valueController.text) ?? 0.0;
 
     if (title.isEmpty || value <= 0) {
       //Validação de titulo e valor
-      return 'Dados incompletos';
+      return;
     }
 
-    onSubmit(title, value);
+    widget.onSubmit(
+        title, value); //Voltar a estudar o widget. (Parametro de statefull)
   }
 
   @override
