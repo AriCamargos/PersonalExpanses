@@ -1,3 +1,5 @@
+import 'package:despesas_pessoais/components/chart.dart';
+import 'components/chart.dart';
 import 'components/transaction_form.dart';
 import 'components/transaction_list.dart';
 import '../models/transaction.dart';
@@ -44,18 +46,29 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _transactions = [
-    /* Transaction(
-        id: 't1',
-        title: 'Novo Tênis de Corrida',
-        value: 310.76,
-        date: DateTime.now()),
     Transaction(
-      id: 't2',
-      title: 'Conta de Luz',
-      value: 211.30,
-      date: DateTime.now(),
-    ), */
+        id: 't0',
+        title: 'Conta antiga',
+        value: 400.76,
+        date: DateTime.now().subtract(Duration(days: 33))),
+    Transaction(
+        id: 't2',
+        title: 'Conta de Luz',
+        value: 211.30,
+        date: DateTime.now().subtract(Duration(days: 4))),
   ];
+
+  List<Transaction> get _recentTransactions {
+    return _transactions
+        .where(
+          (tr) => tr.date.isAfter(
+            DateTime.now().subtract(
+              Duration(days: 7),
+            ),
+          ),
+        )
+        .toList();
+  }
 
   // ignore: unused_element
   _addTransaction(String title, double value) {
@@ -100,11 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              child: Card(
-                child: Text('Gráfico'),
-              ),
-            ),
+            Chart(_recentTransactions),
             TransactionList(_transactions),
           ],
         ),
