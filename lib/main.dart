@@ -16,25 +16,27 @@ class ExpansesApp extends StatelessWidget {
       home: MyHomePage(),
       //Definição do tema
       theme: ThemeData(
-          colorScheme: ThemeData.light().colorScheme.copyWith(
-                primary: Colors.purple,
-                secondary: Colors.amber,
+        colorScheme: ThemeData.light().colorScheme.copyWith(
+              primary: Colors.purple,
+              secondary: Colors.amber,
+            ),
+        textTheme: ThemeData.light().textTheme.copyWith(
+              caption: const TextStyle(
+                fontFamily: 'OpenSans',
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
-          textTheme: ThemeData.light().textTheme.copyWith(
-                caption: const TextStyle(
-                  fontFamily: 'OpenSans',
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-          appBarTheme: const AppBarTheme(
-              //Tema do appBar
-              titleTextStyle: TextStyle(
+            ),
+        appBarTheme: const AppBarTheme(
+          //Tema do appBar
+          titleTextStyle: TextStyle(
             fontFamily: 'OpenSans',
             fontSize: 20,
             fontWeight: FontWeight.bold,
-          ))),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -45,39 +47,24 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _transactions = [
-    Transaction(
-        id: 't0',
-        title: 'Conta antiga',
-        value: 400.76,
-        date: DateTime.now().subtract(Duration(days: 33))),
-    Transaction(
-        id: 't2',
-        title: 'Conta de Luz',
-        value: 211.30,
-        date: DateTime.now().subtract(Duration(days: 4))),
-  ];
+  final List<Transaction> _transactions = [];
 
   List<Transaction> get _recentTransactions {
-    return _transactions
-        .where(
-          (tr) => tr.date.isAfter(
-            DateTime.now().subtract(
-              Duration(days: 7),
-            ),
-          ),
-        )
-        .toList();
+    return _transactions.where((tr) {
+      //Where é uma forma de filtrar
+      return tr.date.isAfter(DateTime.now().subtract(
+        Duration(days: 7), //data de agora subtraindo 7 dias
+      ));
+    }).toList();
   }
 
-  // ignore: unused_element
-  _addTransaction(String title, double value) {
+  _addTransaction(String title, double value, DateTime date) {
     //Dados que serão gerados
     final newTransaction = Transaction(
       id: Random().nextDouble().toString(), //Número aleatório
       title: title,
       value: value,
-      date: DateTime.now(),
+      date: date,
     );
 
     setState(() {
@@ -87,13 +74,24 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context).pop(); //Faz com que o modal seja fechado
   }
 
+  _removeTransaction(String id) {
+    setState(() {
+      _transactions.removeWhere((tr) {
+        return tr.id == id;
+      });
+    });
+  }
+
+  //Modal
   _openTransectionFormModal(BuildContext context) {
     //Método que abre o modal
     showModalBottomSheet(
       //receber 2 parametros
       context: context,
       // ignore: null_check_always_fails
-      builder: (_) => TransactionForm(_addTransaction),
+      builder: (_) {
+        return TransactionForm(_addTransaction);
+      },
     );
   }
 
@@ -114,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Chart(_recentTransactions),
-            TransactionList(_transactions),
+            TransactionList(_transactions, _removeTransaction),
           ],
         ),
       ),
