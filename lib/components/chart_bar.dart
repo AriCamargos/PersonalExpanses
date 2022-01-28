@@ -16,6 +16,7 @@ class ChartBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (ctx, constraints) {
+        //Pela constraints é possível ter acesso a altura, largura etc
         //Isso é uma função
         return Column(
           children: [

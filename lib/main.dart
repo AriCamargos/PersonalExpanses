@@ -11,15 +11,21 @@ main() => runApp(ExpansesApp());
 class ExpansesApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    /* SystemChrome.setPreferredOrientations([ //Orientação para qndo girar a tela automaticamente o app não girar, ficar travado
+      DeviceOrientation.portraitUp
+    ]); */
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: MyHomePage(),
       //Definição do tema
       theme: ThemeData(
-        colorScheme: ThemeData.light().colorScheme.copyWith(
-              primary: Colors.purple,
-              secondary: Colors.amber,
-            ),
+        primarySwatch: Colors.purple,
+        errorColor: Colors.red,
+        colorScheme: ColorScheme.light(
+          secondary: Colors.amber,
+        ),
+        fontFamily: 'Quicksand',
         textTheme: ThemeData.light().textTheme.copyWith(
               caption: const TextStyle(
                 fontFamily: 'OpenSans',
@@ -48,6 +54,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _transactions = [];
+  bool _showChart = false; //Mudado na linha 139
 
   List<Transaction> get _recentTransactions {
     return _transactions.where((tr) {
@@ -97,26 +104,39 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(
+        context); //Faço do método uma constante, fica mais fácil performático.
+    bool isLandscape = mediaQuery.orientation == Orientation.landscape;
     final appBar = AppBar(
       title: Text(
         'Despesas Pessoais',
         style: TextStyle(
             fontSize:
                 20 /* *
-              MediaQuery.of(context)
+              mediaQuery
                   .textScaleFactor,  */ //Escala de responsividade no tamanho da fonte
             ),
       ),
       actions: [
+        if (isLandscape) //Se estiver na tela giratória vai mostrar isso
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _showChart = !_showChart;
+              }); //Altera se vai mostrar ou não o gráfico
+            },
+            //Condição - se tiver habilitado a função _showChart mostra o icone lista, senão mostra o icone chart
+            icon: Icon(_showChart ? Icons.list : Icons.pie_chart),
+          ),
         IconButton(
           onPressed: () => _openTransectionFormModal(context),
           icon: Icon(Icons.add),
         ),
       ],
     );
-    final availabelHeight = MediaQuery.of(context).size.height -
+    final availabelHeight = mediaQuery.size.height -
         appBar.preferredSize.height -
-        MediaQuery.of(context).padding.top;
+        mediaQuery.padding.top;
 
     return Scaffold(
       appBar: appBar,
@@ -124,14 +144,39 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              height: availabelHeight * 0.25,
-              child: Chart(_recentTransactions),
-            ),
-            Container(
-              height: availabelHeight * 0.75,
-              child: TransactionList(_transactions, _removeTransaction),
-            ),
+            //Tirei o botão da interface, ai vai ficar apenas na appBar
+            /* Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Exibir gráfico',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500, letterSpacing: 0.1),
+                ),
+                Switch(
+                    value: _showChart,
+                    onChanged: (value) {
+                      setState(() {
+                        _showChart = value;
+                      });
+                    })
+              ],
+            ) */
+            //Com o IF podemos deixar a operação mais complexo, diferente da operação ternária que é um ou o outro
+            if (_showChart ||
+                !isLandscape) //Condição se o celular estiver no modo paisagem
+              Container(
+                height: availabelHeight *
+                    (isLandscape
+                        ? 0.6
+                        : 0.25), //Alterou o tamanho do gráfico na tela rotativa
+                child: Chart(_recentTransactions),
+              ),
+            if (!_showChart || !isLandscape)
+              Container(
+                height: availabelHeight * 0.75,
+                child: TransactionList(_transactions, _removeTransaction),
+              ),
           ],
         ),
       ),
