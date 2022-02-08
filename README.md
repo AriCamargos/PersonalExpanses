@@ -1,4 +1,27 @@
-# App Despesas Pessoais
+<h1 align="center">
+ App Despesas Pessoais 📱
+</h1>
+
+<p align="center">
+ 
+  <img alt="Repository size" src="https://img.shields.io/github/repo-size/AriCamargos/PersonalExpanses">
+  
+  <img alt="Version" src="https://img.shields.io/badge/version-2.8.1-blue">
+  
+ 
+
+  <a href="https://github.com/AriCamargos/PersonalExpanses">
+    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/AriCamargos/PersonalExpanses">
+  </a>
+
+  <a href="https://github.com/AriCamargos/PersonalExpanses/issues">
+    <img alt="Repository issues" src="https://img.shields.io/github/issues/AriCamargos/PersonalExpanses">
+  </a>
+
+  <img alt="License" src="https://img.shields.io/badge/license-MIT-brightgreen">
+</p>
+
+
 
 <p align="center">
 Aplicativo real de despesas pessoais desenvolvido em curso com comentários.<br>
